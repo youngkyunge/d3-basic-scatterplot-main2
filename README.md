@@ -1,43 +1,97 @@
-# D3 tutorials - Scatter Plot
+# balanced-match
 
-[D3.js](https://d3js.org/) 를 이용하여 시각화 5개 만들기
+Match balanced string pairs, like `{` and `}` or `<b>` and `</b>`. Supports regular expressions as well!
 
-<br>
+[![build status](https://secure.travis-ci.org/juliangruber/balanced-match.svg)](http://travis-ci.org/juliangruber/balanced-match)
+[![downloads](https://img.shields.io/npm/dm/balanced-match.svg)](https://www.npmjs.org/package/balanced-match)
 
-## 무엇을 배우나요?
+[![testling badge](https://ci.testling.com/juliangruber/balanced-match.png)](https://ci.testling.com/juliangruber/balanced-match)
 
-D3.js는 웹상에서 데이터 시각화를 가능하게 하는 자바스크립트 라이브러리입니다. 뉴욕타임즈, 맥킨지, UN 등 다양한 기관에서 데이터에서 발견한 정보를 전달하기 위해 사용합니다. 우리는 D3.js 를 이용하여 가장 대표적인 5가지 시각화를 함께 만들 예정입니다.
+## Example
 
-<br>
+Get the first matching pair of braces:
 
-**5가지 시각화**
+```js
+var balanced = require('balanced-match');
 
-- 라인 차트(Line chart): 시간에 따른 데이터 값의 변화를 보여줍니다
-- 산점도(Scatter plot): 데이터 간의 상관관계를 파악할 수 있습니다
-- 레이더 차트(Radar chart): 데이터의 패턴이나 이상치를 파악하기 쉽습니다
-- 히트맵(Heatmap): 데이터 값을 컬러로 표현하여 값의 분포를 보여줍니다
-- 트리맵(Treemap): 전체와 부분의 비율, 데이터의 계층관계를 보여주기에 적합합니다
+console.log(balanced('{', '}', 'pre{in{nested}}post'));
+console.log(balanced('{', '}', 'pre{first}between{second}post'));
+console.log(balanced(/\s+\{\s+/, /\s+\}\s+/, 'pre  {   in{nest}   }  post'));
+```
 
-<br>
+The matches are:
 
-**실전용 시각화 실습**
+```bash
+$ node example.js
+{ start: 3, end: 14, pre: 'pre', body: 'in{nested}', post: 'post' }
+{ start: 3,
+  end: 9,
+  pre: 'pre',
+  body: 'first',
+  post: 'between{second}post' }
+{ start: 3, end: 17, pre: 'pre', body: 'in{nest}', post: 'post' }
+```
 
-- 시각화에 인터랙션 더하기
-- 반응형 시각화 만들기
+## API
 
-<br>
+### var m = balanced(a, b, str)
 
-## 개발환경
+For the first non-nested matching pair of `a` and `b` in `str`, return an
+object with those keys:
 
-[Vite](https://ko.vitejs.dev/)라는 프론트엔드 번들도구를 사용하였습니다. D3.js 라이브러리와 바닐라 자바스크립트(Vanilla Js)를 이용하였습니다.
+* **start** the index of the first match of `a`
+* **end** the index of the matching `b`
+* **pre** the preamble, `a` and `b` not included
+* **body** the match, `a` and `b` not included
+* **post** the postscript, `a` and `b` not included
 
-[Visual Studio Code](https://code.visualstudio.com/)라는 코드 에디터를 사용합니다. 템플렛을 실행하기 위해서 명령어를 터미널에 입력합니다.
+If there's no match, `undefined` will be returned.
 
-<br>
+If the `str` contains more `a` than `b` / there are unmatched pairs, the first match that was closed will be used. For example, `{{a}` will match `['{', 'a', '']` and `{a}}` will match `['', 'a', '}']`.
 
-## 시작하기
+### var r = balanced.range(a, b, str)
 
-`Download Zip`을 클릭하여, 템플릿을 다운받고 압축을 풉니다. 서버를 실행하기 위해서 아래의 명령어를 터미널에 입력합니다.
+For the first non-nested matching pair of `a` and `b` in `str`, return an
+array with indexes: `[ <a index>, <b index> ]`.
 
-- `npm install`: 라이브러리와 도구들을 설치
-- `npm run dev`: 서버 실행
+If there's no match, `undefined` will be returned.
+
+If the `str` contains more `a` than `b` / there are unmatched pairs, the first match that was closed will be used. For example, `{{a}` will match `[ 1, 3 ]` and `{a}}` will match `[0, 2]`.
+
+## Installation
+
+With [npm](https://npmjs.org) do:
+
+```bash
+npm install balanced-match
+```
+
+## Security contact information
+
+To report a security vulnerability, please use the
+[Tidelift security contact](https://tidelift.com/security).
+Tidelift will coordinate the fix and disclosure.
+
+## License
+
+(MIT)
+
+Copyright (c) 2013 Julian Gruber &lt;julian@juliangruber.com&gt;
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
