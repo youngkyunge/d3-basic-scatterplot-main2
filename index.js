@@ -1,6 +1,2 @@
-export {
-  default as brush,
-  brushX,
-  brushY,
-  brushSelection
-} from "./brush.js";
+export {default as Delaunay} from "./delaunay.js";
+export {default as Voronoi} from "./voronoi.js";
